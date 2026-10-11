@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="icon" href="data:;base64,=">
+    <script src="/dist/wisp-client-legacy.js"></script>
+    <script>
+      const wisp = wisp_client.client;
+
+      let start = performance.now();
+      let ws_url = location.href.replace("http", "ws");
+      let ws = new wisp.WispWebSocket(ws_url + "cloudflare.com:80", null, {wisp_version: 2});
+      
+      ws.binaryType = "arraybuffer";
+      ws.addEventListener("open", () => {
+        console.log("wisp version:", ws.connection.wisp_version);
+        console.log("udp enabled:", ws.connection.udp_enabled);
+        console.log("motd:", ws.connection.server_motd);
+        let payload = "GET /cdn-cgi/trace HTTP/1.1\r\nHost: cloudflare.com\r\nConnection: close\r\n\r\n";
+        ws.send(payload);
+      });
+      ws.addEventListener("message", (event) => {
+        let text = new TextDecoder().decode(event.data);
+        let end = performance.now();
+        let diff = Math.round((end - start) * 100) / 100;
+        console.log(`${diff}ms later - message from stream 1: `, text);
+      });
+      ws.addEventListener("close", () => {
+        console.log("stream 1 closed");
+      });
+    </script>
+  </head>
+  <body>
+    <p>wisp client</p>
+  </body>
+</html>

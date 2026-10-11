@@ -1,0 +1,68 @@
+{
+	"name": "@mercuryworkshop/scramjet",
+	"version": "2.0.67-alpha.2",
+	"license": "AGPL-3.0-only",
+	"description": "An experimental web proxy that aims to be the successor to Ultraviolet",
+	"type": "module",
+	"main": "./dist/scramjet-external.mjs",
+	"module": "./dist/scramjet-external.mjs",
+	"types": "./dist/types/typesEntry.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MercuryWorkshop/scramjet"
+	},
+	"scripts": {
+		"build": "cd ../.. && rspack build --mode production",
+		"rewriter:build": "cd rewriter/wasm/ && bash build.sh && cd ../../",
+		"format": "prettier --write .",
+		"lint": "eslint ./src/",
+		"lint:fix": "eslint ./src/ --fix",
+		"prepack": "RELEASE=1 npm run rewriter:build && npm run build && cp ../../README.md ./README.md"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/types/typesEntry.d.ts",
+			"default": "./dist/scramjet-external.mjs"
+		},
+		"./bundled": {
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/scramjet.mjs"
+		},
+		"./bundled-wasm": {
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/scramjet_bundled.mjs"
+		},
+		"./path": {
+			"types": "./lib/index.d.ts",
+			"default": "./lib/index.cjs"
+		}
+	},
+	"files": [
+		"dist",
+		"lib"
+	],
+	"keywords": [],
+	"author": "",
+	"devDependencies": {
+		"@eslint/eslintrc": "^3.3.1",
+		"@eslint/js": "^9.35.0",
+		"@types/eslint": "^9.6.1",
+		"@types/estree": "^1.0.8",
+		"@types/node": "^24.3.1",
+		"@types/serviceworker": "^0.0.197",
+		"@typescript-eslint/eslint-plugin": "8.62.0",
+		"@typescript-eslint/parser": "8.62.0",
+		"eslint": "^10.1.0",
+		"tslib": "^2.8.1",
+		"typescript": "^5.9.3"
+	},
+	"dependencies": {
+		"@mercuryworkshop/proxy-transports": "catalog:",
+		"dom-serializer": "^2.0.0",
+		"domhandler": "^5.0.3",
+		"domutils": "^3.2.2",
+		"htmlparser2": "catalog:",
+		"idb": "^8.0.3",
+		"parse-domain": "^8.2.2"
+	}
+}
