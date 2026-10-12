@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: fihh
+    runtime: docker
+    plan: free
+    healthCheckPath: /

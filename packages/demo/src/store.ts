@@ -9,7 +9,11 @@ export const AVAILABLE_TRANSPORTS: ReadonlyArray<{
 	{ value: "libcurl", label: "Libcurl" },
 	{ value: "epoxy", label: "Epoxy" },
 ];
-const DEFAULT_WISP_URL = import.meta.env.VITE_WISP_URL;
+// Dev server sets VITE_WISP_URL. In production the Wisp server runs on the same
+// host as the site (see server.mjs), so fall back to this page's own /wisp/ path.
+const DEFAULT_WISP_URL: string =
+	import.meta.env.VITE_WISP_URL ||
+	`${location.protocol === "https:" ? "wss:" : "ws:"}//${location.host}/wisp/`;
 const DEFAULT_TRANSPORT: AvailableTransports = "libcurl";
 const DEFAULT_HOME_URL = "https://google.com";
 const DEFAULT_MAX_REQUESTS = 200;
