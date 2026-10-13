@@ -1,24 +1,41 @@
 import { css, type Component } from "dreamland/core";
 import FlagEditor from "./components/FlagEditor";
-import BrowserView from "./pages/BrowserView";
+import { createTabbedBrowser } from "./pages/TabbedBrowser";
 
-const App: Component = function (cx) {
+const App: Component<
+	{},
+	{},
+	{
+		tabstrip: HTMLDivElement;
+		toolbar: HTMLDivElement;
+		view: HTMLDivElement;
+	}
+> = function (cx) {
+	cx.mount = () => {
+		createTabbedBrowser({
+			tabstrip: this.tabstrip,
+			toolbar: this.toolbar,
+			view: this.view,
+		});
+	};
 	return (
 		<div>
-			<div class="top-bar">
-				<div class="brand">
-					<img src="/icon.png" alt="Fihh logo" class="brand-logo" />
-					<span class="brand-name">Fihh's Proxy</span>
+			<div class="chrome">
+				<div class="top-bar">
+					<div class="brand">
+						<span class="brand-name">Fihh's Proxy</span>
+					</div>
+					<div class="tab-bar">
+						<div this={use(this.tabstrip)}></div>
+					</div>
+					<div class="top-actions">
+						<FlagEditor inline={true} />
+					</div>
 				</div>
-				<div class="tab-bar">
-					<button class="tab-button active">Browser</button>
-				</div>
-				<div class="top-actions">
-					<FlagEditor inline={true} />
-				</div>
+				<div this={use(this.toolbar)}></div>
 			</div>
 			<div class="tab-panel browser-panel active">
-				<BrowserView active={true} />
+				<div this={use(this.view)}></div>
 			</div>
 		</div>
 	);
@@ -78,14 +95,6 @@ App.style = css`
 		gap: 0.45em;
 		padding: 0 0.5em;
 	}
-	.brand-logo {
-		width: 28px;
-		height: 28px;
-		border-radius: 50%;
-		object-fit: cover;
-		border: 2px solid #38bdf8;
-		box-shadow: 0 0 12px rgba(56, 189, 248, 0.55);
-	}
 	.brand-name {
 		color: #7dd3fc;
 		font-weight: 700;
@@ -126,8 +135,12 @@ App.style = css`
 		padding: 0 0.35em;
 		min-height: 28px;
 	}
-	.top-bar::after,
-	.top-bar::before {
+	.chrome {
+		position: relative;
+		z-index: 5;
+	}
+	.chrome::after,
+	.chrome::before {
 		content: "";
 		position: absolute;
 		left: 0;
@@ -138,11 +151,11 @@ App.style = css`
 		background-repeat: repeat-x;
 		background-size: 50% 100%;
 	}
-	.top-bar::before {
+	.chrome::before {
 		background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 120%22 preserveAspectRatio=%22none%22%3E%3Cpath fill=%22rgba(14,165,233,0.30)%22 d=%22M0,70 C200,10 400,110 600,70 C800,30 1000,110 1200,70 L1200,120 L0,120 Z%22/%3E%3C/svg%3E");
 		animation: wave-drift 11s linear infinite reverse;
 	}
-	.top-bar::after {
+	.chrome::after {
 		background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 120%22 preserveAspectRatio=%22none%22%3E%3Cpath fill=%22rgba(56,189,248,0.35)%22 d=%22M0,60 C150,100 350,0 600,60 C850,120 1050,20 1200,60 L1200,120 L0,120 Z%22/%3E%3C/svg%3E");
 		animation: wave-drift 7s linear infinite;
 	}
